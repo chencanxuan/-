@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抽奖</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: sans-serif;
+      padding: 10px;
+      margin: 0;
+      background-color: #f8f8f8;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .box {
+      background-color: rgba(255, 0, 0, 0.05);
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 12px;
+      border-radius: 6px;
+      aspect-ratio: 1 / 1;
+    }
+    .highlight {
+      background-color: red !important;
+      color: white;
+      transform: scale(1.05);
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <h2>🎁 QQ仙侠传 鸿运宝箱</h2>
+  <div class="container" id="grid"></div>
+  <button onclick="startDraw()">开始抽奖</button>
+
+  <script>
+    const totalBoxes = 18;
+    const minNumber = 19;
+    const maxNumber = 36;
+    const grid = document.getElementById('grid');
+
+    const prizes = [
+      "影狐-坐骑", "复活石*5", "影狐-进化启灵珠", "刺绣金线", "光武*1",
+      "超级宝宝技能书", "转运天书", "金刚狮尾蝎-圣兽", "粉红海马-坐骑", "灵媒*10",
+      "光防具*1", "影狐-进化造化丹", "荣华倾国-时装女", "永夜之主-时装男", "冰魄灵鹿辇-圣兽",
+      "7级宝石箱", "鬼天顽玉", "飞天仙玉"
+    ];
+
+    for (let i = 0; i < totalBoxes; i++) {
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.textContent = prizes[i];
+      grid.appendChild(box);
+    }
+
+    let interval = null;
+
+    function startDraw() {
+      if (interval) return;
+
+      const randomNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+      console.log("本次随机数：", randomNumber);
+
+      const targetIndex = (randomNumber - 1) % totalBoxes;
+      const cycles = Math.floor(randomNumber / totalBoxes);
+      const totalSteps = cycles * totalBoxes + targetIndex + 1;
+
+      const boxes = document.querySelectorAll('.box');
+      let current = 0;
+
+      interval = setInterval(() => {
+        boxes.forEach(b => b.classList.remove('highlight'));
+        boxes[current % totalBoxes].classList.add('highlight');
+        current++;
+
+        if (current >= totalSteps) {
+          clearInterval(interval);
+          interval = null;
+
+          const finalIndex = (current - 1) % totalBoxes;
+          const prizeName = prizes[finalIndex];
+
+          setTimeout(() => {
+            alert(`🎉 恭喜你获得了「${prizeName}」！`);
+          }, 100);
+        }
+      }, 300);
+    }
+  </script>
+</body>
+</html>
